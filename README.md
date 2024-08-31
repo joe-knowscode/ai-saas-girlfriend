@@ -19,6 +19,6 @@ pip install -r requirments.txt
 python main.py
 ```
 
-Now go an /start talking to your Girlfriend on Telegram 😉
+Now go and /start talking to your Girlfriend on Telegram 😉
 
 In part 2. We'll be making this bot webhook based (instead of the current polling implementation).
