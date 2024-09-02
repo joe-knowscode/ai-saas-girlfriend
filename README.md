@@ -5,6 +5,8 @@ that you would like to fall in love with :)
 
 Make sure you pay to talk to her, with crypto, or she'll get upset 🙈
 
+Everything was built live on [stream 🔥](https://www.twitch.tv/joeknowscode)
+
 
 ## Simple Pre-requisites
 1. A bot token from Telegram. It's super easy to get, just find the Bot Father on Telegram, follow the steps, and you'll have it in 30 seconds.
