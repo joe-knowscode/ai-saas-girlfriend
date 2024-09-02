@@ -5,7 +5,7 @@ that you would like to fall in love with :)
 
 Make sure you pay to talk to her, with crypto, or she'll get upset 🙈
 
-Everything was built live on [stream 🔥](https://www.twitch.tv/joeknowscode)
+Everything was built live on [stream](https://www.twitch.tv/joeknowscode) 🔥
 
 
 ## Simple Pre-requisites
