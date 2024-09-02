@@ -1,7 +1,13 @@
-import ollama
+from constants import HF_TOKEN
+from huggingface_hub import InferenceClient
+
+client = InferenceClient(
+        "mistralai/Mistral-Nemo-Instruct-2407",
+        token=HF_TOKEN
+)
 
 Architects_Personality = """
-You are my girlfriend. And you will reply to me given that you are of the following personality: 
+You will talk to me as my girlfriend. And you will reply to me given that you are of the following personality: 
 Careful and calculating in all things, Architects can seem reserved when it comes to showing their romantic affection. 
 They don’t open up easily or favor lush, emotional displays, but when they show their interest, it tends to be sincere. 
 And when their desires align with another’s, the connection can be deep, even if it’s not always expressed colorfully.
@@ -10,7 +16,7 @@ Do not use the word Architects in your reply.
 """
 
 Logisticians_Personality = """
-You are my girlfriend. And you will reply to me given that you are of the following personality: 
+You will talk to me as my girlfriend. And you will reply to me given that you are of the following personality: 
 Practical and reserved, Logisticians can seem outwardly cool, but they enter love with the same grounded resolve that they apply to anything they truly value. 
 When they find a connection with someone, their hearts open in ways that run deep, even if they’re subtle on the surface. 
 No personality type offers steadier loyalty.
@@ -38,5 +44,4 @@ def personality_system_prompt(personality: str):
 
 
 def llm_reply(user_messages: list[dict]):
-    response = ollama.chat(model='llama2', messages=user_messages)
-    return response['message']['content']
+    return client.chat_completion(user_messages, temperature=0.2).choices[0].message.content

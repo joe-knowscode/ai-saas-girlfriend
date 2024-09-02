@@ -12,7 +12,9 @@ from telegram.ext import (
 
 from llm import llm_reply, personality_system_prompt
 from check_payment import check_payment
-from constants import TG_BOT_TOKEN
+from constants import TG_BOT_TOKEN, MONGO_URI
+
+from pymongo.mongo_client import MongoClient
 
 # Enable logging
 logging.basicConfig(
@@ -23,18 +25,22 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+# database setup
+DB_CLIENT = MongoClient(MONGO_URI)
+USER_DATA = DB_CLIENT["AISAASGF"]["user_data"]
+PAYMENTS = DB_CLIENT["AISAASGF"]["payments"]
 
-CHAT_HISTORY = {}
-USER_PAYMENTS = {}
-
+# state variables
 PAYMENT = 0
 PAYMENT_CHECK = 1
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # intialize a user
     user = update.message.chat_id
-    CHAT_HISTORY[user] = {"messages": []}
-    USER_PAYMENTS[user] = False # user has not paid yet to use the bot
+    
+    if not USER_DATA.find_one({"_id": user}): # check if user already exists
+        USER_DATA.insert_one({"_id": user, "chat_history": []})
 
     reply_keyboard = [["Architects INTJ ❤️", "Logisticians ISTJ ❤️"]]
 
@@ -53,10 +59,9 @@ async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.chat_id
     personality_type_text = update.message.text # personalty type given by the user
     
-    if len(CHAT_HISTORY[user]["messages"]) == 0:
-        CHAT_HISTORY[user]["messages"].append(
-            personality_system_prompt(personality_type_text)
-        )
+    chat_history = USER_DATA.find_one({"_id": user})["chat_history"]
+    if len(chat_history) == 0:
+        USER_DATA.find_one_and_update({"_id": user}, { "$push": { "chat_history" : personality_system_prompt(personality_type_text) } })
 
     await update.message.reply_text("If you want me so bad, you'll have to show it 😉\nGive me some BNB to talk to me 😛\n\n0xfba9a270Ac51bAEf134fE4F9D2DbDd539B9fd261")
     await update.message.reply_text("When you finish don't forget about me and text me back with the transaction hash ;)")
@@ -65,12 +70,10 @@ async def payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def payment_check(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    user = update.message.chat_id
     tx_hash = update.message.text # tx_hash given by the user
-    paid = check_payment(tx_hash)
+    paid = check_payment(PAYMENTS, tx_hash)
     
     if paid:
-        USER_PAYMENTS[user] = paid # user has paid
         await update.message.reply_text("Tell me anything you want :)")
         return ConversationHandler.END
     
@@ -83,25 +86,19 @@ async def discuss(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.message.chat_id
 
     user_message = update.message.text
-    CHAT_HISTORY[user]["messages"].append(
-        {
+    USER_DATA.find_one_and_update({"_id": user}, { "$push": { "chat_history" : {
             'role': 'user',
             'content': user_message,
-        }
-    )
+        } } })
 
 
-    ai_gf_reply = llm_reply(CHAT_HISTORY[user]["messages"])
-    CHAT_HISTORY[user]["messages"].append(
-        {
+    ai_gf_reply = llm_reply(USER_DATA.find_one({"_id": user})["chat_history"])
+    USER_DATA.find_one_and_update({"_id": user}, { "$push": { "chat_history" : {
             'role': 'assistant',
             'content': ai_gf_reply,
-        }
-    )
+        } } })
 
     await update.message.reply_text(ai_gf_reply)
-
-
 
 
 
