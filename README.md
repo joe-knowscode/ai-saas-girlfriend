@@ -9,9 +9,9 @@ Make sure you pay to talk to her, with crypto, or she'll get upset 🙈
 ## Simple Pre-requisites
 1. A bot token from Telegram. It's super easy to get, just find the Bot Father on Telegram, follow the steps, and you'll have it in 30 seconds.
 2. An account on [Huggingface](https://huggingface.co).
-  i) Create an account token which allows you to hit inference endpoints.
+  1. Create an account token which allows you to hit inference endpoints.
 3. An account on [MongoDB](https://www.mongodb.com).
-  i) Create a Databse on the free tier, and name the DB & Collections to your liking.
+  1. Create a Databse on the free tier, and name the DB & Collections to your liking.
 
 ## How to Run:
 
