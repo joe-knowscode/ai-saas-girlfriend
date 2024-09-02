@@ -1,0 +1,6 @@
+ollama==0.3.2
+python-telegram-bot==21.4
+web3==6.14.0
+python-dotenv==1.0.0
+pymongo==4.7.3
+huggingface-hub==0.24.6
